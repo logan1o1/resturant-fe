@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { UtensilsCrossed } from 'lucide-react';
+import { FcGoogle } from "react-icons/fc";
+
 
 const Signup: React.FC = () => {
-  const [email, setEmail] = useState('demo@fooddash.com');
-  const [password, setPassword] = useState('password');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,7 +21,6 @@ const Signup: React.FC = () => {
           <p className="text-gray-200 mt-4 text-lg">Order from your favorite restaurants, right to your door.</p>
         </div>
       </div>
-
       <div className="md:w-1/2 w-full flex items-center justify-center p-8 md:p-12 bg-white">
         <div className="w-full max-w-md">
           <div className="text-center md:text-left mb-8">
@@ -28,6 +29,20 @@ const Signup: React.FC = () => {
               <h2 className="text-3xl font-bold text-gray-800">FoodDash</h2>
             </div>
             <p className="text-gray-600">Welcome back! Please login to your account.</p>
+          </div>
+
+          <button
+            type="button"
+            className="w-full flex justify-center items-center gap-3 py-3 px-4 border border-gray-300 rounded-lg text-sm font-semibold text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-all"
+          >
+            <FcGoogle />
+            Sign up with Google
+          </button>
+
+          <div className="flex items-center">
+            <div className="flex-grow border-t border-gray-300"></div>
+            <span className="mx-4 text-sm font-medium text-gray-500">OR</span>
+            <div className="flex-grow border-t border-gray-300"></div>
           </div>
 
           <form onSubmit={handleLogin}>
@@ -77,3 +92,6 @@ const Signup: React.FC = () => {
 };
 
 export default Signup;
+
+
+
