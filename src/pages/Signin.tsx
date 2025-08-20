@@ -1,17 +1,51 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { UtensilsCrossed } from 'lucide-react';
 import { FcGoogle } from "react-icons/fc";
+import { useAuthContext } from '../context/AuthContext';
 
 
 const Signup: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [formData, setFormData] = useState({});
+  const [error, setError] = useState<Error | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const navigate = useNavigate();
+  const { signin } = useAuthContext()
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Logging in with:', { email, password });
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.id]: e.target.value,
+    });
   };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      const results = await fetch("/api/auth/signin", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = await results.json();
+      if (data.success == false) {
+        setLoading(false);
+        setError(data.message);
+        return;
+      }
+      setLoading(false);
+      setError(null);
+      signin(data.token);
+      console.log(data);
+      navigate("/");
+    } catch (error) {
+      console.log("The error is: ", error);
+    }
+  };
+
 
   return (
     <div className="flex flex-col md:flex-row h-screen bg-gray-50 font-sans">
@@ -45,17 +79,16 @@ const Signup: React.FC = () => {
             <div className="flex-grow border-t border-gray-300"></div>
           </div>
 
-          <form onSubmit={handleLogin}>
+          <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
-                Email Address
+                Username
               </label>
               <input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                id="username"
+                type="username"
+                placeholder="username"
+                onChange={handleChange}
                 className="w-full px-4 py-3 rounded-lg bg-gray-100 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-500 transition duration-200"
               />
             </div>
@@ -67,8 +100,7 @@ const Signup: React.FC = () => {
                 id="password"
                 type="password"
                 placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={handleChange}
                 className="w-full px-4 py-3 rounded-lg bg-gray-100 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-500 transition duration-200"
               />
             </div>

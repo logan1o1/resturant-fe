@@ -42,7 +42,7 @@ const Navbar: React.FC = () => {
             </div>
 
             <div className="hidden md:flex items-center space-x-8">
-              <Link to="/signin" className="text-gray-600 hover:text-orange-500 font-medium transition-colors">Home</Link>
+              <Link to="/" className="text-gray-600 hover:text-orange-500 font-medium transition-colors">Home</Link>
               <Link to="#" className="text-gray-600 hover:text-orange-500 font-medium transition-colors">Restaurants</Link>
               <Link to="#" className="text-gray-600 hover:text-orange-500 font-medium transition-colors">My Orders</Link>
             </div>
