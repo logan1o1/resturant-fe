@@ -1,10 +1,71 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { UserCircle, Mail, AtSign, ShieldCheck, CalendarDays, ChefHat, Edit, Lock } from 'lucide-react';
+import { useAuthContext } from '../context/AuthContext';
+import { decodeJwt } from '../utils/jwtDecode';
 
+interface Resturant {
+  id: string;
+  name: string;
+}
+
+interface AccDetails {
+  name: string;
+  username: string;
+  email: string;
+  role: "user" | "admin" | "merchant";
+  createdAt: string;
+  restOwned: Resturant[];
+}
+
+const ProfileDetail: React.FC<{ icon: React.ReactNode; label: string; value: string }> = ({ icon, label, value }) => (
+  <div className="flex items-center space-x-4">
+    <div className="bg-gray-100 p-2 rounded-full">
+      {icon}
+    </div>
+    <div>
+      <p className="text-sm text-gray-500">{label}</p>
+      <p className="font-semibold text-gray-800">{value}</p>
+    </div>
+  </div>
+);
 
 const Profile: React.FC = () => {
+  const [accDetails, setAccDetails] = useState<AccDetails | null>(null)
+  const { authToken } = useAuthContext()
 
+  const memberSince = accDetails?.createdAt ? new Date(accDetails?.createdAt).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  }) : "Not available"
 
+  const decodedToken = decodeJwt(authToken)
+
+  const getAccDetails = async () => {
+    if (!authToken) {
+      return
+    }
+    try {
+      const resp = await fetch(`/api/auth/acc_details/${decodedToken?.id}`);
+      const data = await resp.json();
+
+      if (data.success == false) {
+        console.log(data);
+      }
+
+      setAccDetails(data)
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    getAccDetails()
+  }, [authToken])
+
+  if (!accDetails) {
+    return <div className='bg-gray-50 font-sans flex items-center justify-center p-4'>Loading...</div>
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans flex items-center justify-center p-4">
@@ -18,24 +79,23 @@ const Profile: React.FC = () => {
             </div>
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">{mockUser.name}</h1>
-            <p className="text-gray-500">@{mockUser.username}</p>
+            <h1 className="text-3xl font-bold text-gray-900">{accDetails.name}</h1>
+            <p className="text-gray-500">@{accDetails.username}</p>
           </div>
         </div>
 
-        {/* Profile Details Section */}
         <div className="border-t border-gray-200 pt-8">
           <h2 className="text-xl font-bold text-gray-800 mb-6">Account Information</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <ProfileDetail
               icon={<Mail className="w-5 h-5 text-gray-600" />}
               label="Email Address"
-              value={mockUser.email}
+              value={accDetails.email}
             />
             <ProfileDetail
               icon={<ShieldCheck className="w-5 h-5 text-gray-600" />}
               label="Role"
-              value={mockUser.role.charAt(0).toUpperCase() + mockUser.role.slice(1)}
+              value={accDetails.role.charAt(0).toUpperCase() + accDetails.role.slice(1)}
             />
             <ProfileDetail
               icon={<CalendarDays className="w-5 h-5 text-gray-600" />}
@@ -45,11 +105,11 @@ const Profile: React.FC = () => {
           </div>
         </div>
 
-        {mockUser.restOwned.length > 0 && (
+        {accDetails.role == "merchant" && accDetails.restOwned.length > 0 && (
           <div className="border-t border-gray-200 pt-8">
             <h2 className="text-xl font-bold text-gray-800 mb-6">Owned Restaurants</h2>
             <div className="space-y-4">
-              {mockUser.restOwned.map((restaurant) => (
+              {accDetails.restOwned.map((restaurant) => (
                 <div key={restaurant.id} className="flex items-center space-x-4 bg-gray-50 p-4 rounded-lg">
                   <ChefHat className="w-6 h-6 text-orange-500" />
                   <p className="font-semibold text-gray-800">{restaurant.name}</p>
@@ -69,7 +129,6 @@ const Profile: React.FC = () => {
             Change Password
           </button>
         </div>
-
       </div>
     </div>
   );

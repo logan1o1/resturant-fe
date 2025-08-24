@@ -5,7 +5,7 @@ import Signin from './pages/Signin'
 import Profile from './pages/Profile'
 import { Resturants } from './pages/Resturants'
 import Navbar from './components/Navbar'
-import { AuthContextProvider } from './context/AuthContext'
+import { AuthContextProvider } from './context/AuthContextProvider'
 
 function App() {
 

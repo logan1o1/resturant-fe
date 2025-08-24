@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { UtensilsCrossed, User, AtSign, Lock, Eye, EyeOff } from 'lucide-react';
+import { UtensilsCrossed, User, AtSign, Lock, Eye, EyeOff, UserCircle } from 'lucide-react';
 import { FcGoogle } from "react-icons/fc";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -39,7 +39,7 @@ const Signup: React.FC = () => {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({
       ...formData,
       [e.target.id]: e.target.value,
@@ -160,6 +160,29 @@ const Signup: React.FC = () => {
                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer text-gray-400 hover:text-gray-600">
                   {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="role">
+                Role
+              </label>
+              <div className="relative">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                  <UserCircle className="h-5 w-5 text-gray-400" />
+                </div>
+                <select
+                  id="role"
+                  name="role"
+                  onChange={handleChange}
+                  required
+                  defaultValue=""
+                  className="w-full pl-10 px-4 py-3 rounded-lg bg-gray-50 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent appearance-none">
+                  <option value="" disabled>Select a role</option>
+                  <option value="user">User</option>
+                  <option value="merchant">Merchant</option>
+                  <option value="admin">Admin</option>
+                </select>
               </div>
             </div>
 
