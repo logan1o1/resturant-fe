@@ -6,6 +6,9 @@ import Profile from './pages/Profile'
 import { Resturants } from './pages/Resturants'
 import Navbar from './components/Navbar'
 import { AuthContextProvider } from './context/AuthContextProvider'
+import { Food } from './pages/Food'
+import { CreateRestaurant } from './components/CreateRestaurant'
+import { Home } from './pages/Home'
 
 function App() {
 
@@ -15,10 +18,13 @@ function App() {
         <AuthContextProvider>
           <Navbar />
           <Routes>
+            <Route path='/' element={<Home />} />
             <Route path='/signup' element={<Signup />} />
             <Route path='/signin' element={<Signin />} />
             <Route path='/profile' element={<Profile />} />
             <Route path='/resturants' element={<Resturants />} />
+            <Route path='/food/:id' element={<Food />} />
+            <Route path='/create-restaurant' element={<CreateRestaurant />} />
           </Routes>
         </AuthContextProvider>
       </BrowserRouter>

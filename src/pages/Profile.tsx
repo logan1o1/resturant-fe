@@ -105,7 +105,7 @@ const Profile: React.FC = () => {
           </div>
         </div>
 
-        {accDetails.role == "merchant" && accDetails.restOwned.length > 0 && (
+        {accDetails.role == "merchant" && accDetails.restOwned && accDetails.restOwned.length > 0 && (
           <div className="border-t border-gray-200 pt-8">
             <h2 className="text-xl font-bold text-gray-800 mb-6">Owned Restaurants</h2>
             <div className="space-y-4">
