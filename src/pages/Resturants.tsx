@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { decodeJwt } from '../utils/jwtDecode';
 import { UpdateRestaurant } from '../components/UpdateRestaurant';
+import { CreateRestaurant } from '../components/CreateRestaurant';
+import { Plus } from 'lucide-react';
 
 interface Restaurant {
   id: string;
@@ -15,25 +17,26 @@ export const Resturants: React.FC = () => {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [selectedRestaurant, setSelectedRestaurant] = useState<Restaurant | null>(null);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const { authToken } = useContext(AuthContext);
   const decodedToken = decodeJwt(authToken);
 
-  useEffect(() => {
-    const fetchRestaurants = async () => {
-      try {
-        const response = await fetch('/api/resturant/get');
-        const data = await response.json();
+  const fetchRestaurants = async () => {
+    try {
+      const response = await fetch('/api/resturant/get');
+      const data = await response.json();
 
-        if (!response.ok) {
-          setError(data.message || 'Failed to fetch restaurants.');
-        } else {
-          setRestaurants(data);
-        }
-      } catch (error) {
-        setError('An unexpected error occurred.');
+      if (!response.ok) {
+        setError(data.message || 'Failed to fetch restaurants.');
+      } else {
+        setRestaurants(data);
       }
-    };
+    } catch (error) {
+      setError('An unexpected error occurred.');
+    }
+  };
 
+  useEffect(() => {
     fetchRestaurants();
   }, []);
 
@@ -43,28 +46,24 @@ export const Resturants: React.FC = () => {
 
   const handleCloseModal = () => {
     setSelectedRestaurant(null);
-    // Refetch restaurants to show updated data
-    const fetchRestaurants = async () => {
-      try {
-        const response = await fetch('/api/resturant/get');
-        const data = await response.json();
-
-        if (!response.ok) {
-          setError(data.message || 'Failed to fetch restaurants.');
-        } else {
-          setRestaurants(data);
-        }
-      } catch (error) {
-        setError('An unexpected error occurred.');
-      }
-    };
-
+    setIsCreateModalOpen(false);
     fetchRestaurants();
   };
 
   return (
     <div className="max-w-4xl mx-auto mt-10">
-      <h2 className="text-3xl font-bold mb-6 text-center">Restaurants</h2>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-3xl text-white font-bold">Restaurants</h2>
+        {decodedToken?.role === 'merchant' && (
+          <button
+            onClick={() => setIsCreateModalOpen(true)}
+            className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center gap-2"
+          >
+            <Plus size={20} />
+            Create Restaurant
+          </button>
+        )}
+      </div>
       {error && <p className="bg-red-100 text-red-700 p-3 rounded mb-4">{error}</p>}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {restaurants.map((restaurant) => (
@@ -89,12 +88,14 @@ export const Resturants: React.FC = () => {
         ))}
       </div>
 
+      <CreateRestaurant isOpen={isCreateModalOpen} onClose={handleCloseModal} />
+
       {selectedRestaurant && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-8 rounded-lg shadow-xl">
-            <UpdateRestaurant restaurant={selectedRestaurant} onClose={handleCloseModal} />
-          </div>
-        </div>
+        <UpdateRestaurant
+          restaurant={selectedRestaurant}
+          isOpen={!!selectedRestaurant}
+          onClose={handleCloseModal}
+        />
       )}
     </div>
   );

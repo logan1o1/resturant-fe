@@ -50,9 +50,7 @@ const Navbar: React.FC = () => {
             <div className="hidden md:flex items-center space-x-8">
               <Link to="/" className="text-gray-600 hover:text-orange-500 font-medium transition-colors">Home</Link>
               <Link to="/resturants" className="text-gray-600 hover:text-orange-500 font-medium transition-colors">Restaurants</Link>
-              {decodedToken?.role === 'merchant' && (
-                <Link to="/create-restaurant" className="text-gray-600 hover:text-orange-500 font-medium transition-colors">Create Restaurant</Link>
-              )}
+              
             </div>
 
             <div className="flex items-center gap-4">
